@@ -1031,5 +1031,5 @@ before making consequential decisions.
 
 ------------------------------------------------------------------------
 
-**Maintained by:** SENTINEL X project contributors\
+**Maintained by:** https://github.com/mahammad-sakhib-786/
 **Repository:** https://github.com/mahammad-sakhib-786/SENTINEL-X
