@@ -17,3 +17,5 @@ data/legal_documents/*.pdf
 *.sqlite3
 .DS_Store
 Thumbs.db
+
+sentinel_x_test_report.pdf
