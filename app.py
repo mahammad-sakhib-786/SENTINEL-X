@@ -35,6 +35,8 @@ from database import (
     get_investigations,
     delete_investigation,
     delete_all_investigations,
+    save_contract_document,
+    get_contract_document_path,
 )
 
 from agents.orchestrator import run_investigation
@@ -705,6 +707,11 @@ elif page == "Legal Compliance":
 
             contract_path = upload_dir / f"{document_id}.pdf"
             contract_path.write_bytes(contract_bytes)
+            save_contract_document(
+                document_id,
+                uploaded_contract.name,
+                str(contract_path.resolve()),
+            )
 
             st.session_state.legal_document_id = document_id
             st.session_state.legal_contract_path = str(contract_path)
@@ -751,21 +758,7 @@ elif page == "Legal Compliance":
             "legal_compliance_results",
             {}
         )
-        risk_summary = st.session_state.get("legal_risk_summary")
 
-        if risk_summary:
-            st.subheader("Contract Evidence Coverage")
-
-            st.metric(
-                label="Evidence Coverage Score",
-                value=f"{risk_summary['review_score']} / 100",
-            )
-
-            st.caption(
-                "This score measures evidence indicators in the reviewed "
-                "contract text. It is not a legal risk score or a legal "
-                "compliance determination. Human review is required."
-            )
         for check_id, result in results.items():
             with st.expander(result["description"]):
                 if result["status"] == "REVIEW_INDICATED":
@@ -831,11 +824,12 @@ elif page == "Legal Compliance":
                     with st.spinner(
                         "Searching contract and generating answer..."
                     ):
+                        
                         answer = ask_contract_agent(
                             question,
-                            st.session_state.legal_document_id,
-                            st.session_state.legal_contract_path
+                            st.session_state.legal_document_id
                         )
+
 
                     st.session_state.legal_ai_answer = answer
 

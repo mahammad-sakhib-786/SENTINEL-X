@@ -16,7 +16,7 @@ You help users inspect uploaded contracts using the available tools.
 Rules:
 1. For questions about contract clauses, use retrieve_contract_text.
 2. For requests to run a compliance checklist, use
-   run_contract_compliance_check with the exact local PDF path
+   run_contract_compliance_check with the exact document ID
    supplied in the user message.
 3. Never claim that a contract is legally compliant.
 4. Never invent contract clauses or legal requirements.
@@ -40,14 +40,10 @@ agent = create_agent(
 )
 
 
-def ask_contract_agent(
-    question: str,
-    document_id: str,
-    pdf_path: str,
-) -> str:
+def ask_contract_agent(question: str, document_id: str) -> str:
     """
-    Send a contract question, document ID, and local PDF path
-    to the SENTINEL X agent.
+    Send a contract question and document ID to the SENTINEL X agent.
+    The agent retrieves the PDF path internally through its tools.
     """
 
     if not question or not question.strip():
@@ -56,12 +52,8 @@ def ask_contract_agent(
     if not document_id or not document_id.strip():
         raise ValueError("Document ID cannot be empty.")
 
-    if not pdf_path or not pdf_path.strip():
-        raise ValueError("PDF path cannot be empty.")
-
     user_message = f"""
 Uploaded contract document ID: {document_id}
-Uploaded contract local PDF path: {pdf_path}
 
 User question:
 {question}
@@ -70,8 +62,8 @@ Instructions:
 - For clause questions, use retrieve_contract_text.
 - Pass the exact document ID to retrieve_contract_text.
 - For compliance checklist requests, use run_contract_compliance_check.
-- Pass the exact local PDF path to run_contract_compliance_check.
-- Do not ask the user to make the local PDF publicly accessible.
+- Pass the exact document ID to run_contract_compliance_check.
+- Do not request or expose the local PDF path.
 - Base your answer on tool results.
 - Include page and clause references when available.
 """

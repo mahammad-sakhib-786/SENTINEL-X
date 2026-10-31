@@ -36,6 +36,14 @@ def initialize_database():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        cursor.execute("""
+                CREATE TABLE IF NOT EXISTS contract_documents (
+                    document_id VARCHAR(100) PRIMARY KEY,
+                    original_filename VARCHAR(255) NOT NULL,
+                    stored_path TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
 
         # Add new columns without deleting existing records.
         new_columns = [
@@ -205,6 +213,7 @@ def delete_investigation(report_id):
         connection.close()
 
 
+
 def delete_all_investigations():
     connection = get_connection()
     cursor = connection.cursor()
@@ -218,6 +227,57 @@ def delete_all_investigations():
     except Exception:
         connection.rollback()
         raise
+
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def save_contract_document(document_id, original_filename, stored_path):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            """
+            INSERT INTO contract_documents (
+                document_id,
+                original_filename,
+                stored_path
+            )
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                original_filename = VALUES(original_filename),
+                stored_path = VALUES(stored_path)
+            """,
+            (document_id, original_filename, stored_path),
+        )
+        connection.commit()
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def get_contract_document_path(document_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            """
+            SELECT stored_path
+            FROM contract_documents
+            WHERE document_id = %s
+            """,
+            (document_id,),
+        )
+        result = cursor.fetchone()
+        return result[0] if result else None
 
     finally:
         cursor.close()

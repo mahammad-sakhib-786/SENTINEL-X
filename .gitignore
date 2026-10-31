@@ -1,21 +1,19 @@
-.env
-__pycache__/
-.pytest_cache/
-# Environment secrets
-.env
+﻿.env
 .env.*
-
-# Python
-__pycache__/
-*.pyc
+!.env.example
 .venv/
+venv/
+__pycache__/
+*.py[cod]
 .pytest_cache/
-
-# Vector database
+.mypy_cache/
+.ruff_cache/
+.streamlit/secrets.toml
 data/chroma_db/
-
-# Uploaded confidential contracts
 data/legal_documents/uploads/
-
-# Temporary files
-*.tmp
+data/legal_documents/*.pdf
+*.db
+*.sqlite
+*.sqlite3
+.DS_Store
+Thumbs.db
