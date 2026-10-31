@@ -1,3 +1,21 @@
 .env
 __pycache__/
 .pytest_cache/
+# Environment secrets
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Vector database
+data/chroma_db/
+
+# Uploaded confidential contracts
+data/legal_documents/uploads/
+
+# Temporary files
+*.tmp
